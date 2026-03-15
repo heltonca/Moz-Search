@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comunidade Moçambicana na África</title>
+    <style>
+        :root { --primary: #007a33; --accent: #ce1126; --gold: #fcd116; --gray: #f4f4f4; }
+        body { font-family: 'Arial', sans-serif; background: var(--gray); margin: 0; }
+        .nav { background: #000; color: white; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; }
+        .container { max-width: 900px; margin: 20px auto; padding: 20px; }
+        .card { background: white; padding: 20px; border-radius: 12px; shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        
+        /* Dashboard Layout */
+        .dashboard-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
+        @media (max-width: 768px) { .dashboard-grid { grid-template-columns: 1fr; } }
+
+        /* Status de Cota */
+        .status-badge { padding: 5px 15px; border-radius: 20px; font-weight: bold; }
+        .status-pago { background: #d4edda; color: #155724; }
+        .status-atraso { background: #f8d7da; color: #721c24; }
+
+        /* Bloqueio de Funções */
+        .locked { filter: grayscale(1); opacity: 0.5; cursor: not-allowed; pointer-events: none; }
+        .lock-msg { color: var(--accent); font-size: 12px; font-weight: bold; }
+
+        .btn { padding: 12px 20px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        .btn-primary { background: var(--primary); color: white; }
+        .ad-space { background: var(--gold); padding: 15px; text-align: center; border-radius: 8px; margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+<div class="nav">
+    <strong id="nav-title">COMUNIDADE MZ ÁFRICA</strong>
+    <select onchange="updateLang(this.value)">
+        <option value="pt">Português</option>
+        <option value="ch">Changana</option>
+        <option value="en">English</option>
+    </select>
+</div>
+
+<div class="container">
+    <div class="card" id="registo-section">
+        <h2 id="h-registo">Registo Continental</h2>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <div>
+                <label id="lbl-pais">País</label>
+                <select id="pais" style="width:100%; padding:10px;" onchange="carregarProvincias()">
+                    <option value="">Selecione...</option>
+                    <option value="RSA">África do Sul</option>
+                    <option value="ZIM">Zimbabwe</option>
+                    <option value="NAM">Namíbia</option>
+                    <option value="KEN">Quénia</option>
+                </select>
+            </div>
+            <div>
+                <label id="lbl-prov">Província/Estado</label>
+                <select id="provincia" style="width:100%; padding:10px;">
+                    <option id="opt-sel">Selecione o país primeiro</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="dashboard-grid">
+        <div class="card">
+            <h3 id="h-welcome">Bem-vindo, Membro</h3>
+            <p id="p-status">Status da Cota: <span class="status-badge status-atraso" id="cota-status">NÃO PAGO</span></p>
+            <hr>
+            
+            <div id="recursos">
+                <h4 id="h-servicos">Serviços e Apoio</h4>
+                <div id="area-sos" class="locked">
+                    <button class="btn btn-primary">🆘 SOS / EMERGÊNCIA</button>
+                    <p class="lock-msg" id="msg-lock">Função bloqueada. Regularize os R50/mês.</p>
+                </div>
+            </div>
+        </div>
+
+        <div>
+            <div class="card">
+                <h4 id="h-news">Notícias</h4>
+                <div style="font-size: 14px; border-bottom: 1px solid #ddd; padding-bottom: 5px;">
+                    <strong>Consulado:</strong> Novas datas para BI em Joanesburgo.
+                </div>
+            </div>
+
+            <div class="ad-space">
+                <small id="lbl-pub">PUBLICIDADE</small><br>
+                <strong>Mercearia Maputo em Pretoria</strong><br>
+                <small>Produtos da terra aqui!</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const translations = {
+        pt: {
+            nav: "COMUNIDADE MZ ÁFRICA", hReg: "Registo Continental", lblP: "País", lblProv: "Província",
+            welcome: "Bem-vindo, Membro", pStatus: "Status da Cota: ", cotaN: "NÃO PAGO",
+            hServ: "Serviços e Apoio", msgL: "Função bloqueada. Regularize os R50/mês.",
+            hNews: "Notícias", lblPub: "PUBLICIDADE"
+        },
+        ch: {
+            nav: "VANTUMBULUXI VHU AFRIKA", hReg: "Kutsalisa ka Matiko", lblP: "Tiko", lblProv: "Xifundza",
+            welcome: "Xewani, Xirho", pStatus: "Xiyimo xa hakelo: ", cotaN: "A U HHAKELANGA",
+            hServ: "Mpfunu ni Nsirhelelo", msgL: "U fanele u hakela R50 leswaku u pfula.",
+            hNews: "Mahungu", lblPub: "SWA KU NAVETISA"
+        },
+        en: {
+            nav: "MZ AFRICA COMMUNITY", hReg: "Continental Registration", lblP: "Country", lblProv: "Province",
+            welcome: "Welcome, Member", pStatus: "Fee Status: ", cotaN: "UNPAID",
+            hServ: "Services & Support", msgL: "Locked. Please pay R50/month to access.",
+            hNews: "News", lblPub: "ADVERTISING"
+        }
+    };
+
+    function updateLang(lang) {
+        const t = translations[lang];
+        document.getElementById('nav-title').innerText = t.nav;
+        document.getElementById('h-registo').innerText = t.hReg;
+        document.getElementById('lbl-pais').innerText = t.lblP;
+        document.getElementById('lbl-prov').innerText = t.lblProv;
+        document.getElementById('h-welcome').innerText = t.welcome;
+        document.getElementById('p-status').innerHTML = t.pStatus + `<span class="status-badge status-atraso">${t.cotaN}</span>`;
+        document.getElementById('h-servicos').innerText = t.hServ;
+        document.getElementById('msg-lock').innerText = t.msgL;
+        document.getElementById('h-news').innerText = t.hNews;
+        document.getElementById('lbl-pub').innerText = t.lblPub;
+    }
+
+    function carregarProvincias() {
+        const pais = document.getElementById('pais').value;
+        const provSelect = document.getElementById('provincia');
+        provSelect.innerHTML = "";
+        
+        const provs = {
+            "RSA": ["Gauteng", "Limpopo", "Mpumalanga", "Western Cape"],
+            "ZIM": ["Harare", "Bulawayo", "Manicaland"],
+            "NAM": ["Khomas", "Eshana", "Erongo"]
+        };
+
+        if(provs[pais]) {
+            provs[pais].forEach(p => {
+                let opt = document.createElement("option");
+                opt.value = p; opt.text = p;
+                provSelect.add(opt);
+            });
+        }
+    }
+</script>
+</body>
+</html>
